@@ -1,0 +1,79 @@
+﻿@using BlazorBootstrap
+@using SSCP.Web.Models.AuthModels
+@using SSCP.Web.Pages.ModalPages
+@using SSCP.Web.Services.AuthServices
+@inject IAuthService _authService;
+@inject NavigationManager _navigationManager;
+@page "/signup"
+
+
+
+    <div class="form-container">
+        <h2>Create an Account</h2>
+        <p>Join us and start your journey!</p>
+        <EditForm Model="contributor">
+            <label for="fullname">Full Name</label>
+            <input type="text" id="fullname" @bind-value="contributor.Name" required>
+
+            <label for="email">Email Address</label>
+        <input type="email" id="email" @bind-value="contributor.Email" required>
+
+            <label for="username">Username</label>
+        <input type="text" id="username" @bind-value="contributor.UserId" required>
+
+            <label for="password">Password</label>
+        <input type="password" id="password" @bind-value="contributor.Password" required>
+
+            <label for="confirm_password">API Token</label>
+        <input type="password" id="confirm_password" @bind-value="contributor.APIToken" required>
+
+            <div class="checkbox">
+                <input type="checkbox" id="terms" required>
+                <label for="terms">I agree to the Terms & Conditions</label>
+            </div>
+
+            <button type="submit" @onclick="CreateUserAsync">Create Account</button>
+            <p>Already have an account? <a href="/login">Log in</a></p>
+        </EditForm>
+    </div>
+
+<Modal @ref="_loginModal" IsVerticallyCentered OnHiding="HideModalAsync"></Modal>
+
+@if (_showLoader)
+{
+    <SSCP.Web.Pages.SharedPages.Loader></SSCP.Web.Pages.SharedPages.Loader>
+}
+
+@code {
+    private ContributorAuth contributor { get; set; } = new();
+
+    private bool _showLoader = false;
+    private Modal _loginModal;
+
+    private async Task CreateUserAsync()
+    {
+        _showLoader = true;
+        var response = await _authService.CreateUserAsync(contributor);
+        if(response.AuthEnums == Models.Enums.AuthEnums.Success)
+        {
+            _navigationManager.NavigateTo("login");
+        }
+        _showLoader = false;
+        await ShowModalAsync(response.Message);
+    }
+
+    private async Task ShowModalAsync(string message)
+    {
+        Dictionary<string, object> parameters = new();
+        parameters.Add("Message", message);
+
+        await _loginModal.ShowAsync<LoginModal>("Login Info", parameters: parameters);
+
+    }
+
+    private async Task HideModalAsync()
+    {
+        await _loginModal.HideAsync();
+    }
+
+}

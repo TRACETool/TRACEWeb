@@ -1,0 +1,313 @@
+﻿@page "/insights/{Repository}"
+@inject IReportService _reportService;
+@using ChartJs.Blazor.Common
+@using ChartJs.Blazor.Common.Axes
+@using ChartJs.Blazor.Common.Axes.Ticks
+@using ChartJs.Blazor.LineChart
+@using ChartJs.Blazor.Util
+@using SSCP.Web.Models.ReportModels
+@using SSCP.Web.Services.ReportServices
+@using ChartJs.Blazor;
+
+
+
+@if (_showLoader)
+{
+   <SSCP.Web.Pages.SharedPages.Loader></SSCP.Web.Pages.SharedPages.Loader>
+}
+else
+{
+   
+   
+    <div class="dashboard-wrapper">
+    <!-- Header Section -->
+    <header class="dashboard-header">
+        <h1>Insightful Dashboard for @Repository</h1>
+        <p class="dashboard-subtitle">An in-depth look into repository activity</p>
+    </header>
+
+    <!-- Main Content -->
+    <section class="dashboard-section">
+        <div class="grid-container">
+            <!-- Action Breakdown -->
+            <div class="grid-item action-breakdown section-card">
+                <h4 class="section-title">Action Breakdown</h4>
+                <ul class="action-list">
+                    @foreach (var action in insights.ActionBreakdown)
+                    {
+                        <li class="action-item">
+                            <span>@action.ActionType</span>
+                            <span class="action-count">@action.Count</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <br/>
+            <!-- Top Contributors -->
+            <div class="grid-item top-contributors section-card">
+                <h4 class="section-title">Top Contributors</h4>
+                <table class="table contributors-table">
+                    <thead>
+                        <tr>
+                            <th>Author</th>
+                            <th>Actions</th>
+                            <th>Lines Added</th>
+                            <th>Lines Deleted</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var contributor in insights.TopContributors)
+                        {
+                            <tr>
+                                <td>@contributor.Author</td>
+                                <td>@contributor.ActionCount</td>
+                                <td>@contributor.LinesAdded</td>
+                                <td>@contributor.LinesDeleted</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+                <br />
+            <!-- Branch Activity -->
+            <div class="grid-item branch-activity section-card">
+                <h4 class="section-title">Branch Activity</h4>
+                <ul class="action-list">
+                    @foreach (var branch in insights.BranchActivity)
+                    {
+                        <li class="branch-item">
+                            <span>@branch.BranchName</span>
+                            <span class="branch-actions">@branch.ActionCount actions</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+                <br />
+            <!-- Commit Trends -->
+            <div class="grid-item commit-trends section-card flex-fill">
+                <h4 class="section-title">Commit Trends</h4>
+                <div class="chart-container">
+                    <Chart Config="@commitTrendData" />
+                </div>
+            </div>
+                <br />
+            <!-- Top Files Changed -->
+            <div class="grid-item top-files section-card">
+                <h4 class="section-title">Top Files Changed</h4>
+                <ul class="action-list">
+                    @foreach (var file in insights.TopFiles)
+                    {
+                        <li class="file-item">
+                            <span>@file.FileName</span>
+                            <span class="file-actions">@file.ModificationCount actions</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+                <br />
+            <!-- Anomalies -->
+            <div class="grid-item anomalies section-card">
+                <h4 class="section-title">Anomalies</h4>
+                @if (insights.Anomalies.Any())
+                {
+                    <ul class="anomaly-list">
+                        @foreach (var anomaly in insights.Anomalies)
+                        {
+                            <li class="anomaly-item">
+                                <span>@anomaly.Description</span>
+                                <time>@anomaly.Timestamp</time>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="no-anomalies-message">No anomalies detected.</p>
+                }
+            </div>
+        </div>
+    </section>
+</div>
+
+
+   @*  <h4>Action Breakdown</h4>
+    <ul>
+        @foreach (var action in insights.ActionBreakdown)
+        {
+            <li>@action.ActionType: @action.Count</li>
+        }
+    </ul>
+
+    <h4>Top Contributors</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Author</th>
+                <th>Actions</th>
+                <th>Lines Added</th>
+                <th>Lines Deleted</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var contributor in insights.TopContributors)
+            {
+                <tr>
+                    <td>@contributor.Author</td>
+                    <td>@contributor.ActionCount</td>
+                    <td>@contributor.LinesAdded</td>
+                    <td>@contributor.LinesDeleted</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h4>Branch Activity</h4>
+    <ul>
+        @foreach (var branch in insights.BranchActivity)
+        {
+            <li>@branch.BranchName: @branch.ActionCount actions</li>
+        }
+    </ul>
+
+    <h4>Commit Trends</h4>
+    <Chart Config="@commitTrendData"  />
+
+    <h4>Anomalies</h4>
+    @if (insights.Anomalies.Any())
+    {
+        <ul>
+            @foreach (var anomaly in insights.Anomalies)
+            {
+                <li>@anomaly.Description at @anomaly.Timestamp</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No anomalies detected.</p>
+    } *@
+}
+
+
+
+
+@code {
+
+    [Parameter]
+    public string Repository { get; set; }
+    private RepositoryInsightsDto insights;
+
+    //private ChartJs.Blazor.LineChart.LineConfig commitTrendData;
+    private ChartJs.Blazor.Common.BaseConfigOptions trendChartOptions;
+    private LineConfig commitTrendData;
+    private bool _showLoader = false;
+
+    private void PrepareCommitTrendChart()
+    {
+        commitTrendData = new LineConfig
+            {
+                Options = new LineOptions
+                {
+                    Responsive = true,
+                    AspectRatio = 1.5,
+                    MaintainAspectRatio = false,
+                    
+                    Title = new OptionsTitle
+                    {
+                        Display = true,
+                        Text = "Commit Trends"
+                    },
+                    Scales = new Scales
+                    {
+                        XAxes = new List<CartesianAxis>
+                {
+                    new CategoryAxis
+                    {
+                        ScaleLabel = new ScaleLabel
+                        {
+                            Display = true,
+                            LabelString = "Date"
+                        }
+                    }
+                },
+                        YAxes = new List<CartesianAxis>
+                {
+                    new LinearCartesianAxis
+                    {
+                        Ticks = new LinearCartesianTicks
+                        {
+                            BeginAtZero = true
+                        },
+                        ScaleLabel = new ScaleLabel
+                        {
+                            Display = true,
+                            LabelString = "Number of Commits"
+                        }
+                    }
+                }
+                    }
+                }
+            };
+
+        // Dataset configuration
+        var dataset = new LineDataset<int>
+            {
+                Label = "Commits Over Time",
+                BackgroundColor = ColorUtil.ColorString(54, 162, 235, 0.2),
+                BorderColor = ColorUtil.ColorString(54, 162, 235, 1),
+                BorderWidth = 2,
+                Fill = false
+            };
+
+        // Add data and labels
+        foreach (var trend in insights.CommitTrends)
+        {
+            commitTrendData.Data.Labels.Add(trend.Date.ToShortDateString());
+            dataset.Add(trend.CommitCount);
+        }
+
+        commitTrendData.Data.Datasets.Add(dataset);
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _showLoader = true;
+        RepositoryInsightsDto request = new();
+        request.RepositoryName = Repository;
+        insights = await _reportService.GetRepositoryInsightsAsync(request) ;
+        PrepareCommitTrendChart();
+        _showLoader = false;
+    }
+
+    // private void PrepareCommitTrendChart()
+    // {
+    //     commitTrendData = new ChartJs.Blazor.LineChart.LineConfig
+    //         {
+    //             Labels = insights.CommitTrends.Select(trend => trend.Date.ToShortDateString()).ToArray(),
+    //             Datasets = new List<ChartJs.Blazor.Chart.LineChart.LineChartDataset>
+    //         {
+    //             new ChartJs.Blazor.Chart.LineChart.LineChartDataset
+    //             {
+    //                 Label = "Commits Over Time",
+    //                 Data = insights.CommitTrends.Select(trend => (double)trend.CommitCount).ToArray(),
+    //                 BackgroundColor = "rgba(54, 162, 235, 0.2)",
+    //                 BorderColor = "rgba(54, 162, 235, 1)"
+    //             }
+    //         }
+    //         };
+
+    //     trendChartOptions = new ChartJs.Blazor.Chart.Common.ChartOptions
+    //         {
+    //             Title = new ChartJs.Blazor.Chart.Common.Title
+    //             {
+    //                 Text = "Commit Trends",
+    //                 Display = true
+    //             }
+    //         };
+    // }
+}
+
+
+
+

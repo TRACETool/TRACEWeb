@@ -1,0 +1,107 @@
+﻿@using MudBlazor
+
+@using SSCP.Web.Models.ReportModels
+@using SSCP.Web.Services.ReportServices
+@using System.Text.Json
+@using SSCP.Web.Services.SharedServices
+@inject IReportService _reportsService;
+@page "/consolidatedanomalyreport/{Repository}"
+
+@if(!_showLoader){
+
+<h3>@report?.RepositoryName - Comprehensive Anomaly Report</h3>
+}
+
+
+ @if (report == null && ! _showLoader)
+{
+    <p>No data available for this repository.</p>
+}
+else
+{
+    <h4>Repository Details</h4>
+    <p><strong>Repository URL:</strong> <a href="@report.RepositoryUrl" target="_blank">@report.RepositoryUrl</a></p>
+    <p><strong>Total Anomalies:</strong> @report.TotalAnomalies</p>
+
+    <h4>Severity Distribution</h4>
+    <MudTable Dense="true" Hover="true" Items="@report.SeverityDistribution">
+        <HeaderContent>
+            <MudTh>Severity</MudTh>
+            <MudTh>Count</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Severity">@(context.Key)</MudTd>
+            <MudTd DataLabel="Count">@context.Value</MudTd>
+        </RowTemplate>
+    </MudTable>
+
+    <h4>Contributors</h4>
+    <MudTable Dense="true" Hover="true" Items="report.Contributors">
+        <HeaderContent>
+            <MudTh>Contributor Name</MudTh>
+            <MudTh>Anomaly Count</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Contributor Name">@context.ContributorName</MudTd>
+            <MudTd DataLabel="Anomaly Count">@context.AnomalyCount</MudTd>
+        </RowTemplate>
+    </MudTable>
+
+    <h4>Anomaly Commit Details</h4>
+    <MudTable Dense="true" Hover="true" Items="report.AnomalyCommits">
+        <HeaderContent>
+            <MudTh>Contributor</MudTh>
+            <MudTh>Severity</MudTh>
+            <MudTh>Commit SHA</MudTh>
+            <MudTh>Message</MudTh>
+            <MudTh>Author</MudTh>
+            <MudTh>Changes</MudTh>
+            <MudTh>Date</MudTh>
+            <MudTh>Description</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Contributor">@context.ContributorName</MudTd>
+            <MudTd DataLabel="Severity">@(context.Severity)</MudTd>
+            <MudTd DataLabel="Commit SHA">
+                <a href="https://github.com/@report.RepositoryName/commit/@context.CommitSha" target="_blank">@context.CommitSha</a>
+            </MudTd>
+            <MudTd DataLabel="Message">@context.CommitMessage</MudTd>
+            <MudTd DataLabel="Author">@context.AuthorName (@context.AuthorEmail)</MudTd>
+            <MudTd DataLabel="Changes">@context.Additions Add, @context.Deletions Del</MudTd>
+            <MudTd DataLabel="Date">@context.CommitDate.ToShortDateString()</MudTd>
+            <MudTd DataLabel="Description">@context.Description</MudTd>
+        </RowTemplate>
+    </MudTable>
+
+}
+
+
+@if (_showLoader)
+{
+    <SSCP.Web.Pages.SharedPages.Loader></SSCP.Web.Pages.SharedPages.Loader>
+}
+
+@code {
+    [Parameter]
+    public string Repository { get; set; }
+    private RepositoryInsightsDto insights { get; set; } = new();
+    private bool _showLoader { get; set; } = false;
+    private ComprehensiveAnomalyReport report = new();
+
+    protected async override Task OnInitializedAsync()
+    {
+        insights.RepositoryName = Repository;
+        _showLoader = true;
+        report = await _reportsService.GetAnomalyReportAsync(insights);
+        // Serialize using System.Text.Json
+        var json = JsonSerializer.Serialize(report);
+
+        // Deserialize using System.Text.Json
+
+        
+
+        _showLoader = false;
+
+        
+    }
+}

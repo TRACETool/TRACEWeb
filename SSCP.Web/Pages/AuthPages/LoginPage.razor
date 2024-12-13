@@ -1,0 +1,85 @@
+﻿@page "/login"
+@using BlazorBootstrap
+@using Blazored.SessionStorage
+@using SSCP.Web.Models.AuthModels
+@using SSCP.Web.Pages.ModalPages
+@using SSCP.Web.Services.AuthServices
+@inject IAuthService _authService;
+@inject ISessionStorageService _sessionStorage;
+@inject NavigationManager _navigationManager;
+
+    <div class="form-container">
+        <h2>Welcome Back!</h2>
+        <EditForm Model="auth">
+            <label for="login_username">Username or Email</label>
+            <input type="text" id="login_username" @bind-value="auth.Email" required>
+
+            <label for="login_password">Password</label>
+        <input type="password" id="login_password" @bind-value="auth.Password" required>
+
+            <div class="checkbox">
+                <input type="checkbox" id="remember_me">
+                <label for="remember_me">Remember me</label>
+            </div>
+
+            <button type="submit" @onclick="LoginAsync">Log In</button>
+        <p>Don’t have an account? <a href="/signup">Sign Up</a></p>
+            @* <a href="/signup" class="forgot-password">Forgot Password?</a> *@
+        </EditForm>
+    </div>
+
+    <Modal @ref="_loginModal" IsVerticallyCentered OnHiding="HideModalAsync"></Modal>
+
+@if (_showLoader)
+{
+    <SSCP.Web.Pages.SharedPages.Loader></SSCP.Web.Pages.SharedPages.Loader>
+}
+
+@code {
+    private ContributorAuth auth { get; set; } = new();
+    private Modal _loginModal;
+
+    [CascadingParameter]
+    protected MainLayout _mainLayout { get; set; }
+
+    private bool _showLoader = false;
+
+    private async Task LoginAsync()
+    {
+        _showLoader = true;
+        var response = await _authService.UserLoginAsync(auth);
+        if (response != null)
+        {
+            if(response.Status == Models.Enums.AuthEnums.Success)
+            {
+                await _sessionStorage.SetItemAsync("AuTon", response.Token);
+                _mainLayout.isLoggedIn = true;
+                _showLoader = false;
+                _navigationManager.NavigateTo("linkrepos");
+
+
+            }
+            
+        }
+        _showLoader = false;
+        await ShowModalAsync(response.Message);
+
+    }
+
+    private async Task ShowModalAsync(string message)
+    {
+        Dictionary<string, object> parameters = new();
+        parameters.Add("Message", message);
+
+        await _loginModal.ShowAsync<LoginModal>("Login Info", parameters: parameters);
+
+    }
+
+    private async Task HideModalAsync()
+    {
+        await _loginModal.HideAsync();
+    }
+
+
+
+}

@@ -1,0 +1,97 @@
+﻿@using MudBlazor
+
+@using SSCP.Web.Models.ReportModels
+@using SSCP.Web.Services.ReportServices
+@using System.Text.Json
+@using SSCP.Web.Services.SharedServices
+@inject IReportService _reportsService;
+@page "/topanomalies/{Repository}"
+
+@if (!_showLoader)
+{
+
+    <h3>@report?.RepositoryName - Top Anomalies - Where you should focus:</h3>
+}
+
+
+@if (report == null && !_showLoader)
+{
+    <p>No data available for this repository.</p>
+}
+else
+{
+    <h3>Top 5 Historical Anomalies</h3>
+
+    <MudTable Dense="true" Hover="true" Items="@top5Anomalies">
+        <HeaderContent>
+            <MudTh>Repository Name</MudTh>
+            <MudTh>Commit SHA</MudTh>
+            <MudTh>Severity</MudTh>
+            <MudTh>Description</MudTh>
+            <MudTh>Commit Message</MudTh>
+            <MudTh>Author</MudTh>
+            <MudTh>Changes</MudTh>
+            <MudTh>Date</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Repository Name">@Repository</MudTd>
+            <MudTd DataLabel="Commit SHA"><a href="https://github.com/@Repository/commit/@context.CommitSha" target="_blank">@context.CommitSha</a></MudTd>
+            <MudTd DataLabel="Severity">@context.Severity</MudTd>
+            <MudTd DataLabel="Description">@context.Description</MudTd>
+            <MudTd DataLabel="Commit Message">@context.CommitMessage</MudTd>
+            <MudTd DataLabel="Author">@context.AuthorName</MudTd>
+            <MudTd DataLabel="Changes">@context.Additions Add, @context.Deletions Del</MudTd>
+            <MudTd DataLabel="Date">@context.CommitDate.ToShortDateString()</MudTd>
+        </RowTemplate>
+    </MudTable>
+
+
+}
+
+
+@if (_showLoader)
+{
+    <SSCP.Web.Pages.SharedPages.Loader></SSCP.Web.Pages.SharedPages.Loader>
+}
+
+@code {
+    [Parameter]
+    public string Repository { get; set; }
+    private RepositoryInsightsDto insights { get; set; } = new();
+    private bool _showLoader { get; set; } = false;
+    private ComprehensiveAnomalyReport report = new();
+    private List<AnomalyCommitDetails> top5Anomalies = null;
+
+    protected async override Task OnInitializedAsync()
+    {
+        insights.RepositoryName = Repository;
+        _showLoader = true;
+        report = await _reportsService.GetAnomalyReportAsync(insights);
+        // Serialize using System.Text.Json
+        var json = JsonSerializer.Serialize(report);
+
+        // Step 1: Sort anomalies by severity and take the top 5
+        var severityRank = new Dictionary<string, int>
+{
+    { "High", 3 },
+    { "Medium", 2 },
+    { "Low", 1 }
+};
+
+         top5Anomalies = report.AnomalyCommits
+            .OrderByDescending(a => severityRank[a.Severity]).DistinctBy(x => x.CommitSha)  // Sort by severity
+            .Take(5) // Get the top 5 anomalies
+            .ToList();
+
+        // Step 2: Pass the top anomalies to the report view (e.g., in the Razor page)
+
+
+        // Deserialize using System.Text.Json
+
+
+
+        _showLoader = false;
+
+
+    }
+}

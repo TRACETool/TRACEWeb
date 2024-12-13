@@ -1,0 +1,91 @@
+﻿@page "/linkrepos"
+@using MudBlazor
+@using SSCP.Web.Models.RepoModels
+@using SSCP.Web.Services.ReportServices
+@inject IReportService _reportService;
+<MudPaper Class="pa-4 mx-auto mt-6" Elevation="4" MaxWidth="900px">
+    <MudText Typo="Typo.h4" Class="mb-4">GitHub Repositories</MudText>
+
+   
+    
+
+    @if (IsLoading)
+    {
+        <MudProgressCircular Indeterminate="true" Class="mb-4" />
+        <MudText Typo="Typo.body1">Loading repositories...</MudText>
+    }
+    else if (Repositories?.Any() == true)
+    {
+        <MudTable Items="Repositories" Dense="true" Hover="true" Bordered="true" Striped="true">
+            <HeaderContent>
+                <MudTh>Repository Name</MudTh>
+                <MudTh>Owner</MudTh>
+                <MudTh>Visibility</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>@context.Name</MudTd>
+                <MudTd>@context.RepoOwner.Login</MudTd>
+                <MudTd>@context.Visibility</MudTd>
+                <MudTd>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => SelectRepo(context)">Select</MudButton>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
+    else
+    {
+        <MudText Typo="Typo.body1">No repositories found.</MudText>
+    }
+
+    @if (SelectedRepo != null)
+    {
+        <MudPaper Class="pa-4 mt-4" Elevation="3">
+            @* <MudText Typo="Typo.h6">Selected Repository Details</MudText>
+        <MudText Typo="Typo.body1">Name: @SelectedRepo.Name</MudText>
+        <MudText Typo="Typo.body1">Owner: @SelectedRepo.RepoOwner.Login</MudText>
+        <MudText Typo="Typo.body1">Description: @SelectedRepo.Description</MudText>
+        <MudText Typo="Typo.body1">Visibility: @SelectedRepo.Visibility</MudText> *@
+            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="() => SelectedRepo = new()">Deselect</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="StoreReposAsync">Register Repos</MudButton>
+        </MudPaper>
+    }
+</MudPaper>
+
+@code {
+
+    private List<GithubRepo> Repositories { get; set; } = new();
+    private List<GithubRepo> SelectedRepo { get; set; } = new();
+    private bool IsLoading { get; set; } = true;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            IsLoading = true;
+            SelectedRepo = new();
+            Repositories = await _reportService.ListRepositoriesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error fetching repositories: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    private void SelectRepo(GithubRepo repo)
+    {
+        SelectedRepo.Add(repo);
+    }
+
+    private async Task StoreReposAsync()
+    {
+        IsLoading = true;
+        var response = await _reportService.StoreReposAsync(SelectedRepo);
+        IsLoading = false;
+    }
+}

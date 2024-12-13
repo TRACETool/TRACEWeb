@@ -1,0 +1,865 @@
+﻿/** {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f6f8;
+}
+
+.form-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h2 {
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    color: #333;
+}
+
+p {
+    margin-bottom: 1.5rem;
+    color: #666;
+}
+
+form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    text-align: left;
+    color: #333;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"] {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1.2rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+    form input[type="text"]:focus,
+    form input[type="email"]:focus,
+    form input[type="password"]:focus {
+        border-color: #007BFF;
+    }
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.2rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+    .checkbox input {
+        margin-right: 0.4rem;
+    }
+
+button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+.forgot-password {
+    display: block;
+    margin-top: 1rem;
+    color: #007BFF;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+    .forgot-password:hover {
+        text-decoration: underline;
+    }
+
+a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+    a:hover {
+        text-decoration: underline;
+    }
+*/
+
+/* General reset for consistency */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body, .main-layout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f6f8;
+}
+
+/* Main form container */
+.form-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 1rem;
+}
+
+/* Headers and text */
+h2 {
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    color: #333;
+}
+
+p {
+    margin-bottom: 1.5rem;
+    color: #666;
+}
+
+/* Labels and input fields */
+form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    text-align: left;
+    color: #333;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"] {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1.2rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+    form input[type="text"]:focus,
+    form input[type="email"]:focus,
+    form input[type="password"]:focus {
+        border-color: #007BFF;
+    }
+
+/* Checkbox styling */
+.checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.2rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+    .checkbox input {
+        margin-right: 0.4rem;
+    }
+
+/* Button styling */
+button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+.forgot-password {
+    display: block;
+    margin-top: 1rem;
+    color: #007BFF;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+    .forgot-password:hover {
+        text-decoration: underline;
+    }
+
+/* Link styling */
+a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 600px) {
+    .form-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.6rem;
+    }
+
+    button {
+        font-size: 0.95rem;
+    }
+}
+
+
+/*-------------------Charts----------------*/
+
+
+
+ /*Global Styles */
+/*body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f5f7fb;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.dashboard-wrapper {
+    max-width: 2200px;
+    margin: 30px auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.dashboard-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+    .dashboard-header h1 {
+        font-size: 2.5rem;
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+.dashboard-subtitle {
+    font-size: 1.2rem;
+    color: #7f8c8d;
+}
+
+.dashboard-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.section-card {
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .section-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+.section-title {
+    font-size: 1.5rem;
+    color: #34495e;
+    margin-bottom: 15px;
+    border-left: 5px solid #3498db;
+    padding-left: 10px;
+}
+
+.action-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.action-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background-color: #ecf3fa;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-weight: 500;
+    color: #2980b9;
+}
+
+.action-count {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.contributors-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .contributors-table th,
+    .contributors-table td {
+        padding: 10px 15px;
+        text-align: left;
+    }
+
+    .contributors-table th {
+        background-color: #3498db;
+        color: #ffffff;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    .contributors-table tr:nth-child(even) {
+        background-color: #f2f6fa;
+    }
+
+    .contributors-table tr:hover {
+        background-color: #ecf3fa;
+    }
+
+.file-list {
+    list-style: none;
+    padding: 50px;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.file-actions {
+    font-weight: bold;
+    color: #F5CBA7;*/ /* Soft peach */
+/*}*/
+
+ /*Branch Activity */
+/*.branch-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.branch-item {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.chart-container {
+    text-align: center;
+    padding: 20px;
+    border: 1px dashed #bdc3c7;
+    border-radius: 8px;
+    background-color: #f5f7fb;
+}
+
+.anomaly-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.anomaly-item {
+    background-color: #fdf2f4;
+    color: #e74c3c;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.no-anomalies-message {
+    text-align: center;
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .section-card {
+        padding: 15px;
+    }
+
+    .section-title {
+        font-size: 1.2rem;
+    }
+}*/
+
+.loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3; /* Light gray */
+    border-top: 4px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+
+/*insights*/
+
+/* Global Styles */
+/*body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f0f4f8;*/ /* Lighter background for freshness */
+    /*color: #333;*/ /* Dark gray text for good readability */
+    /*margin: 0;
+    padding: 0;
+}*/
+
+/* Dashboard Wrapper */
+/*.dashboard-wrapper {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}*/
+
+/* Header Section */
+/*.dashboard-header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #2c3e50;*/ /* Soft dark gray for header */
+/*}
+
+    .dashboard-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background-image: linear-gradient(to right, #3498db, #9b59b6);*/ /* Gradient header */
+        /*-webkit-background-clip: text;
+        color: transparent;
+    }
+
+.dashboard-subtitle {
+    font-size: 1.2rem;
+    color: #7f8c8d;*/ /* Muted gray for subtitle */
+/*}*/
+
+/* Section Styles */
+/*.dashboard-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}*/
+
+/* Section Cards */
+/*.section-card {
+    background-color: #ffffff;*/ /* White background for clarity */
+    /*border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .section-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+    }*/
+
+/* Section Title */
+/*.section-title {
+    font-size: 1.5rem;
+    color: #34495e;*/ /* Dark gray-blue for headings */
+    /*margin-bottom: 15px;
+    border-left: 5px solid #2ecc71;*/ /* Soft green border */
+    /*padding-left: 10px;
+}*/
+
+/* Action Breakdown */
+/*.action-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.action-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background-color: #eaf7fa;*/ /* Soft light blue */
+    /*border-radius: 8px;
+    margin-bottom: 10px;
+    color: #2980b9;*/ /* Soft blue for text */
+/*}
+
+    .action-item:hover {
+        background-color: #d0ebf4;*/ /* Slightly darker on hover */
+    /*}
+
+.action-count {
+    font-weight: bold;
+}*/
+
+/* Table Styles (Top Contributors) */
+/*.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #f9f9f9;*/ /* Light gray */
+    /*color: #34495e;*/ /* Dark gray text */
+/*}
+
+tr:nth-child(even) {
+    background-color: #f0f4f8;*/ /* Light alternating row colors */
+/*}
+
+td {
+    color: #7f8c8d;*/ /* Muted gray for data */
+/*}*/
+
+/* Branch Activity */
+/*.branch-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background-color: #eaf7fa;*/ /* Soft blue */
+    /*border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.branch-actions {
+    color: #2980b9;*/ /* Soft blue for actions */
+/*}
+
+.branch-item:hover {
+    background-color: #d0ebf4;*/ /* Slightly darker on hover */
+/*}*/
+
+/* Commit Trends */
+/*.chart-container {
+    width: 100%;
+    height: 300px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #ecf0f1;
+}*/
+
+/* Top Files Changed */
+/*.file-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background-color: #f7f9fa;*/ /* Very light gray */
+    /*border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.file-actions {
+    color: #2980b9;*/ /* Soft blue for actions */
+/*}*/
+
+/* Anomalies */
+/*.anomaly-item {
+    padding: 10px 15px;
+    background-color: #f9ebea;*/ /* Soft light red for anomalies */
+    /*border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+    .anomaly-item:hover {
+        background-color: #f2d1c9;*/ /* Slightly darker red for hover */
+    /*}
+
+.no-anomalies-message {
+    color: #7f8c8d;*/ /* Muted gray */
+/*}*/
+
+/* Button Styling */
+/*.button {
+    background-color: #3498db;*/ /* Soft blue button */
+    /*color: #ffffff;*/ /* White text */
+    /*padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .button:hover {
+        background-color: #2980b9;*/ /* Darker blue on hover */
+    /*}*/
+
+/* Responsive Design */
+/*@media (max-width: 768px) {
+    .dashboard-section {
+        grid-template-columns: 1fr;
+    }
+}*/
+
+/* Global Styles */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f4f7fc; /* Lighter background for contrast */
+    color: #333; /* Dark gray text */
+    margin: 0;
+    padding: 0;
+}
+
+/* Dashboard Wrapper */
+.dashboard-wrapper {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* Header Section */
+.dashboard-header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #2c3e50; /* Soft dark gray */
+}
+
+    .dashboard-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background-image: linear-gradient(to right, #3498db, #e74c3c); /* Gradient header with blue and red */
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+
+.dashboard-subtitle {
+    font-size: 1.2rem;
+    color: #7f8c8d; /* Muted gray */
+}
+
+/* Section Styles */
+.dashboard-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* Section Cards */
+.section-card {
+    background-color: #ffffff; /* White background for clarity */
+    border-radius: 12px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-left: 5px solid #f39c12; /* Gold accent border for distinction */
+}
+
+    .section-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+    }
+
+/* Section Title */
+.section-title {
+    font-size: 1.5rem;
+    color: #34495e; /* Dark gray-blue */
+    margin-bottom: 15px;
+    border-left: 5px solid #9b59b6; /* Purple accent border */
+    padding-left: 10px;
+}
+
+/* Action Breakdown */
+.action-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.action-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 18px;
+    background-color: #ecf8fc; /* Light cyan background */
+    border-radius: 10px;
+    margin-bottom: 12px;
+    color: #2980b9; /* Soft blue text */
+    transition: background-color 0.3s ease;
+}
+
+    .action-item:hover {
+        background-color: #d0f1f9; /* Slightly darker cyan on hover */
+    }
+
+.action-count {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* Table Styles (Top Contributors) */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #f5f5f5; /* Light gray header */
+    color: #34495e;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9; /* Slightly darker gray rows */
+}
+
+td {
+    color: #7f8c8d; /* Muted text for data */
+}
+
+/* Branch Activity */
+.branch-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 18px;
+    background-color: #f3f9fc; /* Light blue */
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.branch-actions {
+    color: #e74c3c; /* Bright red actions for emphasis */
+}
+
+.branch-item:hover {
+    background-color: #eaf7fc; /* Slightly darker blue on hover */
+}
+
+/* Commit Trends */
+.chart-container {
+    width: 100%;
+    height: 300px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 40px;
+    border: 1px solid #ecf0f1;
+}
+
+/* Top Files Changed */
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 18px;
+    background-color: #f7f9fa; /* Very light gray */
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.file-actions {
+    color: #2980b9; /* Soft blue for actions */
+}
+
+/* Anomalies */
+.anomaly-item {
+    padding: 12px 18px;
+    background-color: #ffe6e6; /* Light pink for anomalies */
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+    .anomaly-item:hover {
+        background-color: #ffd1d1; /* Slightly darker pink on hover */
+    }
+
+.no-anomalies-message {
+    color: #7f8c8d;
+}
+
+/* Button Styling */
+.button {
+    background-color: #e74c3c; /* Bright red button */
+    color: #ffffff; /* White text */
+    padding: 12px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .button:hover {
+        background-color: #c0392b; /* Darker red on hover */
+    }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dashboard-section {
+        grid-template-columns: 1fr;
+    }
+}
+
